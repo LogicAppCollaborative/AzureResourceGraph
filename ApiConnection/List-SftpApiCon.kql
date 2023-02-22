@@ -1,0 +1,9 @@
+// List all SFTP(SSH) ApiConnections
+// List hostname, username
+resources
+| where type == 'microsoft.web/connections'
+| extend props = todynamic(properties)
+| extend param = props.parameterValues
+| where props.api.name == 'sftpwithssh' and //param.hostName == 'sftp.contoso.com'
+| project name, param.hostName, param.userName, resourceGroup, subscriptionId
+| order by resourceGroup, name
