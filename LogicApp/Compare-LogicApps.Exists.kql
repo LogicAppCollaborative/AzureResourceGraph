@@ -1,0 +1,13 @@
+// 78618e21-485b-4894-9f95-5df945ffb969 is the "base" subscription, the one that have the complete list
+// 7c6ba8ea-f9fc-46d9-97dc-6b221177ea22 is the "target" subscription, the one where we should find the missing logic apps
+// -TST is the environment specific suffix, that needs to be removed - so we have a base name to compare with
+// -UAT is the environment specific suffix, that needs to be removed - so we have a target name to compare against
+resources
+| where type == "microsoft.logic/workflows" and subscriptionId == '78618e21-485b-4894-9f95-5df945ffb969' and resourceGroup == 'rg-base'
+| project TST_LA_Name=replace("-TST", "", toupper(name))
+| join kind=leftouter (resources
+    | where type == "microsoft.logic/workflows" and subscriptionId == '7c6ba8ea-f9fc-46d9-97dc-6b221177ea22' and resourceGroup == 'rg-target'
+    | project UAT_LA_Name=replace("-UAT", "", toupper(name))
+) 
+on $left.TST_LA_Name == $right.UAT_LA_Name
+| project TST_LA_Name=strcat(TST_LA_Name, "-TST"), UAT_LA_Name=iff(UAT_LA_Name == '', 'N/A', strcat(UAT_LA_Name, "-UAT"))
