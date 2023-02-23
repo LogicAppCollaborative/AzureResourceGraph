@@ -1,0 +1,9 @@
+resources
+| where type == "microsoft.logic/workflows"
+| extend connections = properties.parameters.$connections.value
+| mv-expand(connections)
+| project name, connections, id
+| parse kind = regex connections with * '"id":"' connection_id '","connectionName' *
+| project LogicApp=name,ConnectorId=connection_id
+| where isnotempty(ConnectorId)
+| order by LogicApp
