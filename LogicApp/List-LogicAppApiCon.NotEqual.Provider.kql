@@ -1,0 +1,12 @@
+// Will list all Logic Apps
+// Where any connection, is located in a different subscription
+// than the provider used
+resources
+| where type == "microsoft.logic/workflows"
+| extend connections = properties.parameters.$connections.value
+| mv-expand(connections)
+| parse kind = regex flags = Ui connections with * '"id":"/subscriptions/' provider_subscription '/providers/.*"'
+| parse kind = regex flags = Ui connections with * ',"connectionId":"/subscriptions/' connection_subscription '/resourceGroups.*"'
+| parse kind = regex flags = Ui connections with * '"connectionName":"' connection_connectionName '"'
+| where provider_subscription != connection_subscription
+| project LogicApp=name, subscriptionId, provider_subscription, connection_subscription, connection_connectionName
