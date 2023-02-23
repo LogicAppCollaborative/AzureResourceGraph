@@ -1,9 +1,11 @@
+// Inspired by 
+// https://www.mikestephenson.me/2023/02/18/ive-got-500-logic-apps-how-can-i-workout-which-connectors-im-using
 resources
 | where type == "microsoft.logic/workflows"
 | extend connections = properties.parameters.$connections.value
 | mv-expand(connections)
 | project name, connections, id
-| parse kind = regex connections with * '"id":"' connection_id '","connectionName' *
+| parse kind = regex flags = Ui connections with '"id":"' connection_id '"'
 | project ConnectorId=connection_id
 | where isnotempty(ConnectorId)
 | summarize count() by ConnectorId
