@@ -1,0 +1,5 @@
+resources
+| where type == "microsoft.logic/workflows"
+| where properties.parameters.$connections.value contains "commondataservice"
+| where properties.definition contains "/datasets/" or properties.definition.triggers contains "/datasets/"
+| project TriggerType= iif(properties.definition.triggers contains "ApiConnectionWebhook", iff(properties.definition.triggers contains "/datasets/", "Legacy", "Preview"), "NotUsed"), ActionType= iif(properties.definition contains "/datasets/", "AtLeastOneLegacyReference", "Preview/NotUsed"), name, resourceGroup, subscriptionId, properties
