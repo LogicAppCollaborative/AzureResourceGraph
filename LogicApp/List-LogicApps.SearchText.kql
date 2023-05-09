@@ -1,0 +1,5 @@
+resources
+| where type == "microsoft.logic/workflows"
+| where properties contains "secret"
+| order by subscriptionId, resourceGroup
+| project name, resourceGroup, subscriptionId, properties
