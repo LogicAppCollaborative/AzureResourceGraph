@@ -2,4 +2,9 @@ resources
 | where type == "microsoft.logic/workflows"
 | extend triggerName = tostring(bag_keys(properties.definition.triggers)[0])
 | extend triggerInfo=properties.definition.triggers[triggerName]
-| project name, resourceGroup, subscriptionId, state=properties.state, triggerName, triggerType=coalesce(triggerInfo.kind, triggerInfo.type), triggerRecurrence=coalesce(triggerInfo.recurrence,triggerInfo.inputs.body.entityname,properties.accessEndpoint), triggerInvocationUri=properties.accessEndpoint, properties
+| join kind=inner (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project subscriptionId, subscriptionName = name)
+    on subscriptionId
+| project name, resourceGroup, subscriptionName, subscriptionId, state=properties.state, triggerName, triggerType=coalesce(triggerInfo.kind, triggerInfo.type), triggerRecurrence=coalesce(triggerInfo.recurrence,triggerInfo.inputs.body.entityname,properties.accessEndpoint), triggerInvocationUri=properties.accessEndpoint, properties
