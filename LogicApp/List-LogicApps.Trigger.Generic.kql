@@ -1,5 +1,3 @@
 resources
 | where type == "microsoft.logic/workflows"
-| where isnull(properties.definition.triggers.manual.kind)
-| where isnull(properties.definition.triggers.Recurrence.type)
 | project name, resourceGroup, subscriptionId, state=properties.state, triggerName=bag_keys(properties.definition.triggers)[0],triggerInfo=properties.definition.triggers, properties
