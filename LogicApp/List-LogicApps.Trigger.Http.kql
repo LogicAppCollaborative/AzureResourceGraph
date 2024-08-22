@@ -1,0 +1,4 @@
+resources
+| where type == "microsoft.logic/workflows"
+| where isnotnull(properties.definition.triggers.manual.kind)
+| project name, resourceGroup, subscriptionId, state=properties.state, triggerType=properties.definition.triggers.manual.kind, triggerUri=todynamic(properties)['accessEndpoint'], properties
