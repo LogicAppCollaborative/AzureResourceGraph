@@ -1,0 +1,18 @@
+resources
+| where type =~ "microsoft.web/sites"
+| join kind=inner (
+    resourcecontainers
+    | where type == 'microsoft.resources/subscriptions'
+    | project subscriptionId, subscriptionName = name)
+    on subscriptionId
+| project name, resourceGroup, subscriptionName, subscriptionId, kind, properties.state, properties.enabled, id, properties
+| join kind=inner (
+    resources
+    | where type =~ "microsoft.web/sites"
+    | extend sslStates = properties.hostNameSslStates
+    | mv-expand sslStates
+    | summarize concatenatedNames = strcat_array(make_list(sslStates.name), ", ") by id
+    | project id, concatenatedNames
+    )
+    on id
+| project name, resourceGroup, subscriptionName, subscriptionId, kind, properties.state, properties.enabled, HostNames=concatenatedNames, id, properties
