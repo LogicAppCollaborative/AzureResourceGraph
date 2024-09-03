@@ -15,4 +15,4 @@ resources
     | project id, concatenatedNames
     )
     on id
-| project name, resourceGroup, subscriptionName, subscriptionId, kind, properties.state, properties.enabled, HostNames=concatenatedNames, id, properties
+| project name, resourceGroup, subscriptionName, subscriptionId, kind, State=properties.state, Enabled=properties.enabled, HostNames=concatenatedNames, id, properties
