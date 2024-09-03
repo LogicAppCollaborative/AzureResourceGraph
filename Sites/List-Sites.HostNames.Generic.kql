@@ -14,4 +14,4 @@ resources
     | project id, concatenatedNames
     )
     on id
-| project name, resourceGroup, subscriptionName, subscriptionId, kind, State=properties.state, Enabled=properties.enabled, HostNames=concatenatedNames, AppServicePlan=split(properties.serverFarmId, "/")[-1], AppServicePlanId=properties.serverFarmId, id, properties
+| project name, resourceGroup, subscriptionName, subscriptionId, kind, State=properties.state, Enabled=properties.enabled, DefaultHost=properties.defaultHostName, HostNames=concatenatedNames, AppServicePlan=split(properties.serverFarmId, "/")[-1], AppServicePlanId=properties.serverFarmId, id, properties
